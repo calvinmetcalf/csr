@@ -18,7 +18,12 @@ function generateEcdsa(curve) {
     true,
     ["sign", "verify"]
   ).then(function (pair) {
-    return global.crypto.subtle.exportKey("jwk", pair.privateKey);
+    return global.crypto.subtle.exportKey("jwk", pair.privateKey).then(function (jwk) {
+      return {
+        pair: pair,
+        jwk: jwk
+      }
+    });
   });
 }
 function generateRsa(len) {
@@ -31,8 +36,13 @@ function generateRsa(len) {
     true,
     ["sign", "verify"]
   ).then(function (pair) {
-    return global.crypto.subtle.exportKey("jwk", pair.privateKey);
-  }).then(function (a){console.log(a)});
+    return global.crypto.subtle.exportKey("jwk", pair.privateKey).then(function (jwk) {
+      return {
+        pair: pair,
+        jwk: jwk
+      }
+    });
+  });
 }
 var attrIds = {
   commonName: '2.5.4.3'.split('.'),
