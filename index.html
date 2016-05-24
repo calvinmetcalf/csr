@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSR Creator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  </head>
+  <body>
+    <form class="form-horizontal">
+  <fieldset>
+
+  <legend>CSR Creator</legend>
+
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="commonName">Site Url</label>
+    <div class="col-md-4">
+    <input id="commonName" name="commonName" type="text" placeholder="" class="form-control input-md" />
+
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="countryName">Country</label>
+    <div class="col-md-4">
+    <input id="countryName" name="countryName" type="text" placeholder="" class="form-control input-md" />
+
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="stateOrProvinceName">State or Province</label>
+    <div class="col-md-4">
+    <input id="stateOrProvinceName" name="stateOrProvinceName" type="text" placeholder="" class="form-control input-md" />
+
+    </div>
+  </div>
+
+  <div class="form-group" id="gen-form">
+    <label class="col-md-4 control-label" for="localityName">Locality</label>
+    <div class="col-md-4">
+    <input id="localityName" name="localityName" type="text" placeholder="" class="form-control input-md" />
+
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="organizationName">Org</label>
+    <div class="col-md-4">
+    <input id="organizationName" name="organizationName" type="text" placeholder="" class="form-control input-md" />
+
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="organizationalUnitName">Org Unit</label>
+    <div class="col-md-4">
+    <input id="organizationalUnitName" name="organizationalUnitName" type="text" placeholder="" class="form-control input-md" />
+
+    </div>
+  </div>
+   <input type="submit" value="create" class="btn btn-primary"/>
+  </fieldset>
+  </form>
+  <div id="output"/>
+  </body>
+</html>
