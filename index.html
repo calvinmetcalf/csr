@@ -11,7 +11,18 @@
   <fieldset>
 
   <legend>CSR Creator</legend>
-
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="selectbasic">Key Type</label>
+    <div class="col-md-4">
+      <select id="selectbasic" name="selectbasic" class="form-control">
+        <option value="1">ECDSA 256</option>
+        <option value="2">RSA 2048</option>
+        <option value="3">RSA 4096</option>
+        <option value="4">ECDSA 384</option>
+        <option value="5">ECDSA 521</option>
+      </select>
+    </div>
+  </div>
   <div class="form-group">
     <label class="col-md-4 control-label" for="commonName">Site Url</label>
     <div class="col-md-4">
