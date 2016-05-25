@@ -42,7 +42,7 @@ var CertificationRequestInfo = exports.CertificationRequestInfo = asn1.define('C
     this.key('version').use(Version),
     this.key('info').use(RelativeDistinguishedName),
     this.key('publicKey').use(SubjectPublicKeyInfo),
-    this.key('attributes').implicit(0).optional().seqOf(Int)
+    this.key('attributes').seqof(Int).implicit(0).optional()
   );
 });
 exports.CertificationRequest = asn1.define('CertificationRequest', function() {

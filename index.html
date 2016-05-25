@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   </head>
   <body>
-    <form class="form-horizontal">
+    <form class="form-horizontal" id="main-form">
   <fieldset>
 
   <legend>CSR Creator</legend>
   <div class="form-group">
-    <label class="col-md-4 control-label" for="selectbasic">Key Type</label>
+    <label class="col-md-4 control-label" for="keytype">Key Type</label>
     <div class="col-md-4">
-      <select id="selectbasic" name="selectbasic" class="form-control">
+      <select id="keytype" name="keytype" class="form-control">
         <option value="1">ECDSA 256</option>
         <option value="2">RSA 2048</option>
         <option value="3">RSA 4096</option>
@@ -33,7 +33,7 @@
   <div class="form-group">
     <label class="col-md-4 control-label" for="countryName">Country</label>
     <div class="col-md-4">
-    <input id="countryName" name="countryName" type="text" placeholder="" class="form-control input-md" />
+    <input id="countryName" maxlength="2" name="countryName" type="text" placeholder="" class="form-control input-md" />
 
     </div>
   </div>
@@ -73,5 +73,6 @@
   </fieldset>
   </form>
   <div id="output"/>
+  <script src="bundle.js"></script>
   </body>
 </html>
