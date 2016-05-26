@@ -30,7 +30,7 @@ var SubjectPublicKeyInfo = exports.SubjectPublicKeyInfo = asn1.define('SubjectPu
 });
 
 var AttributeValue = asn1.define('AttributeValue', function() {
-  this.printstr();
+  this.utf8str();
 });
 var AttributeType = exports.AttributeType = asn1.define('AttributeType', function() {
   this.objid();
