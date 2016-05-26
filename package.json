@@ -11,5 +11,8 @@
   "devDependencies": {
     "browserify": "^13.0.1",
     "watchify": "^3.7.0"
+  },
+  "dependencies": {
+    "jwk-to-pem": "^1.2.5"
   }
 }

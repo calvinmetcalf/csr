@@ -1,4 +1,11 @@
 var asn1 = require('asn1.js');
+
+var AlgorithmIdentifierRSA = exports.AlgorithmIdentifierRSA = asn1.define('AlgorithmIdentifierRSA', function() {
+  this.seq().obj(
+    this.key('algorithm').objid(),
+    this.key('parameters').optional().null_()
+  );
+});
 var AlgorithmIdentifier = exports.AlgorithmIdentifier = asn1.define('AlgorithmIdentifier', function() {
   this.seq().obj(
     this.key('algorithm').objid(),
@@ -25,7 +32,7 @@ var SubjectPublicKeyInfo = exports.SubjectPublicKeyInfo = asn1.define('SubjectPu
 var AttributeValue = asn1.define('AttributeValue', function() {
   this.printstr();
 });
-var AttributeType = asn1.define('AttributeType', function() {
+var AttributeType = exports.AttributeType = asn1.define('AttributeType', function() {
   this.objid();
 });
 var AttributeTypeAndValue = asn1.define('AttributeTypeAndValue', function () {
@@ -34,13 +41,17 @@ var AttributeTypeAndValue = asn1.define('AttributeTypeAndValue', function () {
     this.key('value').use(AttributeValue)
   );
 })
+
 var RelativeDistinguishedName = exports.RelativeDistinguishedName = asn1.define('RelativeDistinguishedName',function() {
   this.setof(AttributeTypeAndValue);
+});
+var SeqOfRelativeDistinguishedName = asn1.define('SeqOfRelativeDistinguishedName',function() {
+  this.seqof(RelativeDistinguishedName);
 });
 var CertificationRequestInfo = exports.CertificationRequestInfo = asn1.define('CertificationRequestInfo', function() {
   this.seq().obj(
     this.key('version').use(Version),
-    this.key('info').use(RelativeDistinguishedName),
+    this.key('info').use(SeqOfRelativeDistinguishedName),
     this.key('publicKey').use(SubjectPublicKeyInfo),
     this.key('attributes').seqof(Int).implicit(0).optional()
   );
@@ -49,6 +60,13 @@ exports.CertificationRequest = asn1.define('CertificationRequest', function() {
   this.seq().obj(
     this.key('certificationRequestInfo').use(CertificationRequestInfo),
     this.key('signatureAlgorithm').use(AlgorithmIdentifier),
+    this.key('signature').bitstr()
+  );
+});
+exports.CertificationRequestRSA = asn1.define('CertificationRequestRSA', function() {
+  this.seq().obj(
+    this.key('certificationRequestInfo').use(CertificationRequestInfo),
+    this.key('signatureAlgorithm').use(AlgorithmIdentifierRSA),
     this.key('signature').bitstr()
   );
 });

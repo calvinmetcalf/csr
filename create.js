@@ -4,7 +4,7 @@ var asn1 = require('asn1.js');
 var EC = require('elliptic').ec;
 var b64ToBn = require('./b64-to-bn');
 var exp = new Uint8Array([1,0,1]);
-
+var jwkToPem = require('jwk-to-pem');
 var ECParameters = asn1.define('ECParameters', /* @this */ function() {
   this.choice({
     namedCurve: this.objid()
@@ -16,6 +16,17 @@ var RSAPublicKey = asn1.define('RSAPublicKey', /* @this */ function() {
     this.key('publicExponent').int()
   );
 });
+var params = {
+  'P-256': csr.AttributeType.encode([1, 2, 840, 10045, 3, 1, 7], 'pem', {
+    label: 'EC PARAMETERS'
+  }),
+  'P-384': csr.AttributeType.encode([1, 3, 132, 0, 34], 'pem', {
+    label: 'EC PARAMETERS'
+  }),
+  'P-521': csr.AttributeType.encode([1, 3, 132, 0, 35], 'pem', {
+    label: 'EC PARAMETERS'
+  })
+}
 var ecoids = {
   'P-256': [1, 2, 840, 10045, 3, 1, 7],
   'P-384': [1, 3, 132, 0, 34],
@@ -90,10 +101,14 @@ var attrIds = {
 function createInfo(info) {
   return Object.keys(info).map(function (name) {
     if (attrIds[name]) {
-      return {
-        type: attrIds[name],
-        value: info[name]
+      var val = info[name].trim();
+      if (name === 'subjectAltName' && !val) {
+        return;
       }
+      return [{
+        type: attrIds[name],
+        value: val
+      }]
     }
   }).filter(function (item) {
     return item;
@@ -102,10 +117,13 @@ function createInfo(info) {
 function publicKey(key, algo) {
   if (algo === 'rsa') {
     return {
-      subjectPublicKey: RSAPublicKey.encode({
-        modulus: b64ToBn(key.jwk.n, false),
-        publicExponent: b64ToBn(key.jwk.e, false)
-      }, 'der'),
+      subjectPublicKey: {
+        unused: 0,
+        data: RSAPublicKey.encode({
+          modulus: b64ToBn(key.jwk.n, false),
+          publicExponent: b64ToBn(key.jwk.e, false)
+        }, 'der')
+      },
       algorithm: {
         algorithm: '1.2.840.113549.1.1.1'.split('.')
       }
@@ -157,6 +175,7 @@ function makeId(keyType) {
   case '2':
   case '3':
     return {
+      parameters: null,
       algorithm: '1.2.840.113549.1.1.11'.split('.')
     };
   case '1':
@@ -186,12 +205,28 @@ module.exports = function (keyType, info) {
     } else {
       signProm = global.crypto.subtle.sign({name: 'ECDSA', hash: {name: hash[key.jwk.crv]}}, key.pair.privateKey, signable.der);
     }
-    return signProm.then(function (sig) {
-      return csr.CertificationRequest({
+    return Promise.all([signProm.then(function (sig) {
+      var method = algo === 'rsa' ? 'CertificationRequestRSA' : 'CertificationRequest';
+      return csr[method].encode({
         certificationRequestInfo: signable.json,
-        signature: sig,
+        signature: {
+          unused: 0,
+          data: new Buffer(sig)
+        },
         signatureAlgorithm: makeId(keyType)
+      }, 'pem', {
+        label: 'CERTIFICATE REQUEST'
       })
-    });
+    }),
+    Promise.resolve(jwkToPem(key.jwk, {
+      private: true
+    })).then(function (keyPem) {
+      if (algo === 'rsa') {
+        return keyPem
+      }
+      var param = params[key.jwk.crv];
+      return param + '\n' + keyPem;
+    })
+  ]);
   });
 }

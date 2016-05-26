@@ -1,7 +1,8 @@
 var makeCsr = require('./create');
 
 var form = global.document.getElementById('main-form');
-
+var certTag = global.document.getElementById('cert');
+var keyTag = global.document.getElementById('key');
 form.addEventListener('submit', function (event) {
   event.preventDefault();
   var formData = new FormData(form);
@@ -16,8 +17,19 @@ form.addEventListener('submit', function (event) {
     obj[key] = value;
   }
   makeCsr(keytype, obj).then(function (resp) {
-    console.log(resp);
+    setCert(resp[0]);
+    setKey(resp[1]);
   }).catch(function (e) {
     console.log(e);
   })
 });
+function setCert(cert) {
+  var tag = document.createElement('pre');
+  tag.textContent=cert;
+  certTag.replaceChild(tag, certTag.firstChild);
+}
+function setKey(key) {
+  var tag = document.createElement('pre');
+  tag.textContent=key;
+  keyTag.replaceChild(tag, keyTag.firstChild);
+}
