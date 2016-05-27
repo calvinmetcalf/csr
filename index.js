@@ -16,6 +16,7 @@ form.addEventListener('submit', function (event) {
     }
     obj[key] = value;
   }
+  clearAll();
   makeCsr(keytype, obj).then(function (resp) {
     setCert(resp[0]);
     setKey(resp[1]);
@@ -23,6 +24,12 @@ form.addEventListener('submit', function (event) {
     console.log(e);
   })
 });
+function clearAll() {
+  var tag = document.createElement('span');
+  var tag2 = document.createElement('span');
+  certTag.replaceChild(tag, certTag.firstChild);
+  keyTag.replaceChild(tag2, keyTag.firstChild);
+}
 function setCert(cert) {
   var tag = document.createElement('pre');
   tag.textContent=cert;
