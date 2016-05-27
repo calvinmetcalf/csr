@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "watchify -d index.js -o bundle.js -v",
-    "build": "browserify index.js > bundle.js"
+    "watch": "watchify -d index.js -o worker.js -v",
+    "build": "browserify index.js > worker.js"
   },
   "author": "",
   "license": "ISC",

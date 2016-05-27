@@ -339,6 +339,52 @@
   <div class="row"> <div class="col-md-6 col-md-offset-2" id="cert"><span/></div></div>
   <div class="row"> <div class="col-md-6 col-md-offset-2" id="key"><span/></div></div>
 </div>
-  <script src="bundle.js"></script>
+  <script>
+
+  var form = document.getElementById('main-form');
+  var certTag = document.getElementById('cert');
+  var keyTag = document.getElementById('key');
+  var worker = new Worker('./worker.js');
+  worker.addEventListener('message', function (e) {
+    var resp = e.data;
+    setCert(resp[0]);
+    setKey(resp[1]);
+  });
+  worker.addEventListener('error', function (e) {
+    console.log(e);
+  });
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    var formData = new FormData(form);
+
+    var obj = {};
+    var keytype;
+    for (let [key, value] of formData) {
+      if (key === 'keytype') {
+        keytype = value;
+        continue;
+      }
+      obj[key] = value;
+    }
+    clearAll();
+    worker.postMessage([keytype, obj]);
+  });
+  function clearAll() {
+    var tag = document.createElement('span');
+    var tag2 = document.createElement('span');
+    certTag.replaceChild(tag, certTag.firstChild);
+    keyTag.replaceChild(tag2, keyTag.firstChild);
+  }
+  function setCert(cert) {
+    var tag = document.createElement('pre');
+    tag.textContent=cert;
+    certTag.replaceChild(tag, certTag.firstChild);
+  }
+  function setKey(key) {
+    var tag = document.createElement('pre');
+    tag.textContent=key;
+    keyTag.replaceChild(tag, keyTag.firstChild);
+  }
+  </script>
   </body>
 </html>
