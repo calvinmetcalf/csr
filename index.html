@@ -336,6 +336,7 @@
  </div>
  </div>
   </form>
+    <div class="row"><div class="col-md-6 col-md-offset-2" id="zip"></div></div>
   <div class="row"> <div class="col-md-6 col-md-offset-2" id="cert"><span/></div></div>
   <div class="row"> <div class="col-md-6 col-md-offset-2" id="key"><span/></div></div>
 </div>
@@ -344,11 +345,46 @@
   var form = document.getElementById('main-form');
   var certTag = document.getElementById('cert');
   var keyTag = document.getElementById('key');
+  var zipTag = document.getElementById('zip');
+  var attached = false;
   var worker = new Worker('./worker.js');
+  var button = document.createElement('button');
+  var zipWorker;
+  var stuff = {};
+  button.classList.add('btn', 'btn-primary');
+  button.textContent='Download Zip';
+  function zip() {
+    if (!zipWorker) {
+      zipWorker = new Worker('./zip-worker.js');
+      zipWorker.addEventListener('message', function (e) {
+        console.log('done');
+        var resp = e.data;
+        var blob = new Blob([resp], {type: 'application/octet-binary'});
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.download = 'csr.zip';
+        link.href = url;
+        var event = new MouseEvent("click");
+        link.dispatchEvent(event);
+        setTimeout(function () {
+          URL.revokeObjectURL(url);
+        });
+      });
+    }
+    
+    zipWorker.postMessage(stuff);
+  }
+  button.addEventListener('click', zip);
   worker.addEventListener('message', function (e) {
     var resp = e.data;
     setCert(resp[0]);
     setKey(resp[1]);
+    stuff.csr = resp[0];
+    stuff.key = resp[1];
+    if (!attached) {
+      zipTag.appendChild(button);
+      attached = true;
+    }
   });
   worker.addEventListener('error', function (e) {
     console.log(e);
@@ -370,6 +406,10 @@
     worker.postMessage([keytype, obj]);
   });
   function clearAll() {
+    if (attached) {
+      zipTag.removeChild(button);
+      attached = false;
+    }
     var tag = document.createElement('span');
     var tag2 = document.createElement('span');
     certTag.replaceChild(tag, certTag.firstChild);

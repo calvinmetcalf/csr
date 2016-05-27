@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch": "watchify -d index.js -o worker.js -v",
-    "build": "browserify index.js > worker.js"
+    "build": "browserify index.js > worker.js && browserify zip-index.js > zip-worker.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "ecc-web-sig": "^1.0.0",
+    "jszip": "^3.0.0",
     "jwk-to-pem": "^1.2.5",
     "minimalistic-assert": "^1.0.0"
   }
