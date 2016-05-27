@@ -5,7 +5,7 @@ var EC = require('elliptic').ec;
 var b64ToBn = require('./b64-to-bn');
 var exp = new Uint8Array([1,0,1]);
 var jwkToPem = require('jwk-to-pem');
-var der = require('./der');
+var der = require('ecc-web-sig');
 
 var ECParameters = asn1.define('ECParameters', /* @this */ function() {
   this.choice({
@@ -218,7 +218,7 @@ module.exports = function (keyType, info) {
     return Promise.all([signProm.then(function (sig) {
       var method = algo === 'rsa' ? 'CertificationRequestRSA' : 'CertificationRequest';
       if (algo !== 'rsa') {
-        sig = der.toDER(new Buffer(sig));
+        sig = der.toDer(new Buffer(sig));
       } else {
         sig = new Buffer(sig);
       }
