@@ -101,11 +101,12 @@ var attrIds = {
   organizationalUnitName: '2.5.4.11'.split('.'),
   subjectAltName: '2.5.29.17'.split('.')
 }
+var blankable = ['subjectAltName', 'organizationalUnitName'];
 function createInfo(info) {
   return Object.keys(info).map(function (name) {
     if (attrIds[name]) {
       var val = info[name].trim();
-      if (name === 'subjectAltName' && !val) {
+      if (blankable.indexOf(name) > -1 && !val) {
         return;
       }
       return [{
