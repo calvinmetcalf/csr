@@ -5,6 +5,8 @@ var EC = require('elliptic').ec;
 var b64ToBn = require('./b64-to-bn');
 var exp = new Uint8Array([1,0,1]);
 var jwkToPem = require('jwk-to-pem');
+var der = require('./der');
+
 var ECParameters = asn1.define('ECParameters', /* @this */ function() {
   this.choice({
     namedCurve: this.objid()
@@ -46,7 +48,8 @@ function createSignable(info, key, algo) {
   var obj = {
     info: createInfo(info),
     version: 0,
-    publicKey: publicKey(key, algo)
+    publicKey: publicKey(key, algo),
+    attributes: []
   };
   var der = csr.CertificationRequestInfo.encode(obj, 'der');
   return {
@@ -125,7 +128,11 @@ function publicKey(key, algo) {
         }, 'der')
       },
       algorithm: {
-        algorithm: '1.2.840.113549.1.1.1'.split('.')
+        type: 'AlgorithmIdentifierRSA',
+        value: {
+          algorithm: '1.2.840.113549.1.1.1'.split('.'),
+          parameters: null
+        }
       }
     }
   } else if (algo === 'ec') {
@@ -149,8 +156,11 @@ function publicKey(key, algo) {
     }, 'der');
     return {
       algorithm: {
-        algorithm: [1, 2, 840, 10045, 2, 1],
-        parameters: parameters
+        type: 'AlgorithmIdentifier',
+        value: {
+          algorithm: [1, 2, 840, 10045, 2, 1],
+          parameters: parameters
+        }
       },
       subjectPublicKey: subjectPublicKey
     }
@@ -207,11 +217,16 @@ module.exports = function (keyType, info) {
     }
     return Promise.all([signProm.then(function (sig) {
       var method = algo === 'rsa' ? 'CertificationRequestRSA' : 'CertificationRequest';
+      if (algo !== 'rsa') {
+        sig = der.toDER(new Buffer(sig));
+      } else {
+        sig = new Buffer(sig);
+      }
       return csr[method].encode({
         certificationRequestInfo: signable.json,
         signature: {
           unused: 0,
-          data: new Buffer(sig)
+          data: sig
         },
         signatureAlgorithm: makeId(keyType)
       }, 'pem', {

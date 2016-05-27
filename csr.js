@@ -12,6 +12,12 @@ var AlgorithmIdentifier = exports.AlgorithmIdentifier = asn1.define('AlgorithmId
     this.key('parameters').optional().any()
   );
 });
+var AlgoChoice =  asn1.define('AlgoChoice', function() {
+  this.choice({
+    AlgorithmIdentifier: this.use(AlgorithmIdentifier),
+    AlgorithmIdentifierRSA: this.use(AlgorithmIdentifierRSA)
+  });
+});
 var Version = exports.Version = asn1.define('Version', function() {
   this.int({
     0: 'v1',
@@ -24,7 +30,7 @@ var Int = asn1.define('Int', function() {
 });
 var SubjectPublicKeyInfo = exports.SubjectPublicKeyInfo = asn1.define('SubjectPublicKeyInfo', function() {
   this.seq().obj(
-    this.key('algorithm').use(AlgorithmIdentifier),
+    this.key('algorithm').use(AlgoChoice),
     this.key('subjectPublicKey').bitstr()
   );
 });
