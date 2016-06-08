@@ -21,5 +21,5 @@ this.addEventListener('fetch', function(event) {
       cache.put(event.request, response);
     });
     return response.clone();
-  });
+  }));
 });
