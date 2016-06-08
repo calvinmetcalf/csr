@@ -336,7 +336,14 @@
   <div class="row"> <div class="col-md-6 col-md-offset-2" id="key"><span/></div></div>
 </div>
   <script>
-
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/csr/sw.js', {
+     scope: '/csr/' 
+    }).then(main, main);
+  } else {
+    main();
+  }
+function main() {
   var form = document.getElementById('main-form');
   var certTag = document.getElementById('cert');
   var keyTag = document.getElementById('key');
@@ -420,6 +427,7 @@
     tag.textContent=key;
     keyTag.replaceChild(tag, keyTag.firstChild);
   }
+}
   </script>
   </body>
 </html>
